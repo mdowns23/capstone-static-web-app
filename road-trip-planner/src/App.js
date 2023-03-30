@@ -11,21 +11,24 @@ import {useJsApiLoader, GoogleMap, MarkerF, Autocomplete, DirectionsRenderer} fr
 const center = {lat: 47.6205,lng: -122.3493}
 
 function App() {
- /*
-  const [data, setData] = useState('');
+/*
+  const [googleMapsKey, setGoogleMapsKey] = useState('');
 
   useEffect(() => {
     (async function () {
-      const { text } = await( await fetch(`/api/message`)).json();
-      setData(text);
+      const { key } = await( await fetch(`/api/data_function`)).json();
+      //console.log(key)
+      setGoogleMapsKey(key);
     })();
   });
-
-  return <div>{data}</div>;
 */
 
+  //return <div>{data}</div>;
+
+console.log(process.env.REACT_APP_GOOGLE_MAPS_API_KEY)
+
 // starting and destiton location.
-  console.log(process.env.REACT_APP_GOOGLE_MAPS_API_KEY)
+  
   // variable startingLocation
   const [startingLocation, setStartingLocation] = useState()
   //variable: destation
@@ -57,10 +60,13 @@ function App() {
   };
 
     //google maps api key
-  const {isLoaded} = useJsApiLoader({
+  const {isLoaded}=useJsApiLoader({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
     libraries:['places'], 
   })
+
+  
+  
 
   const [map, setMap] = useState(/** @type google.maps.Map */ (null))
   const [directionResponse, setDirectionResponse] = useState(null)
