@@ -25,7 +25,7 @@ function App() {
 */
 
 // starting and destiton location.
-
+  console.log(process.env.REACT_APP_GOOGLE_MAPS_API_KEY)
   // variable startingLocation
   const [startingLocation, setStartingLocation] = useState()
   //variable: destation
@@ -71,6 +71,8 @@ function App() {
   const originRef = useRef()
   /** @type React.MutableRefObject<HTMLInputElement> */
   const destinationRef = useRef()
+
+  
 
   if(!isLoaded){
     return(<></>)
