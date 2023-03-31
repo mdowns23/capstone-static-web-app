@@ -16,7 +16,7 @@ jobs:
     name: Build and Deploy Job
     env:
       CI: false
-      REACT_APP_GOOGLE_MAPS_API_KEY: $GOOGLE_MAPS_API_KEY
+      REACT_APP_GOOGLE_MAPS_API_KEY: ${{GOOGLE_MAPS_API_KEY}}
     steps:
       - uses: actions/checkout@v2
         with:
