@@ -25,7 +25,7 @@ function App() {
 
   //return <div>{data}</div>;
 
-console.log(process.env.REACT_APP_GOOGLE_MAPS_API_KEY)
+//console.log(process.env.REACT_APP_GOOGLE_MAPS_API_KEY)
 
 // starting and destiton location.
   
@@ -41,7 +41,7 @@ console.log(process.env.REACT_APP_GOOGLE_MAPS_API_KEY)
   const handleSatringLocationChange = (event) => {
     const value = event.target.value;
     setStartingLocation(value);
-    console.log(`Starting Location: ${value}`);
+    //console.log(`Starting Location: ${value}`);
     //setStartingLocation(e.target.value);
     //console.log("User location" + e.target.value);
   };
@@ -49,7 +49,7 @@ console.log(process.env.REACT_APP_GOOGLE_MAPS_API_KEY)
   //setting the diestentaion to update
   const handleDestinationChange = (e) => {
     setDestination(e.target.value);
-    console.log("User Destination" + e.target.value);
+    //console.log("User Destination" + e.target.value);
   };
 
     const handleMapSubmit = (e) => {
@@ -95,8 +95,8 @@ console.log(process.env.REACT_APP_GOOGLE_MAPS_API_KEY)
       destination: destinationRef.current.value,
       travelMode: google.maps.TravelMode.DRIVING
     })
-    console.log(originRef.current.value)
-    console.log(destinationRef.current.value)
+    //console.log(originRef.current.value)
+    //console.log(destinationRef.current.value)
     setDirectionResponse(results)
     setDistance(results.routes[0].legs[0].distance.text)
     setDuration(results.routes[0].legs[0].duration.text)
