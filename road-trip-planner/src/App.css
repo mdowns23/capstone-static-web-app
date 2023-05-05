@@ -36,3 +36,54 @@
     transform: rotate(360deg);
   }
 }
+
+
+
+.wrapper {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+}
+
+.map-container {
+  flex: 2;
+  height: 100%;
+}
+
+.gas-container {
+  flex: 1;
+  height: 100%;
+  overflow-y: scroll; /* add a scrollbar to the gas container if necessary */
+}
+
+
+
+
+
+.trip-info {
+  margin: 10px auto;
+  width: 80%;
+  border-collapse: collapse;
+  border: 2px solid #ddd;
+  background-color: #f9f9f9;
+}
+
+.trip-info-row {
+  border: 2px solid #ddd;
+  background-color: #f2f2f2;
+}
+
+.trip-info-label {
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: right;
+  color: #555;
+}
+
+.trip-info-value {
+  padding: 10px;
+  font-size: 16px;
+  text-align: left;
+  color: #333;
+}

@@ -56,8 +56,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         response = requests.post(url, data=data1)
         res = json.loads(response.content)
         stations = res.get("primaryStations")
-        id = stations[0].get("id")
-        price = stations[0].get("price")
+        id = ''
+        price = ''
+        if(stations):
+            id = stations[0].get("id")
+            price = stations[0].get("price")
+            
+            
         lat3 = float(body1.get('lat'))
         long3 = float(body1.get('lng'))
         url2 = 'https://www.gasbuddy.com/gaspricemap/county?lat={lati1}&lng={longi1}&usa=true'.format(lati1=lat3, longi1=long3)
@@ -67,10 +72,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         }
         response2 = requests.post(url2)
         res2 = json.loads(response2.content)
+        if(price == '--' or price == ''):
+                price = str(res2[0].get("Price"))
+                price+= " (AVG in County)"
         print(response2.content)
-        if(price == '--'):
-            price = str(res2[0].get("Price"))
-            price+= " (AVG in County)"
+        
         #print("RES2: " + response2.text)
         return func.HttpResponse(json.dumps(price))
     else:

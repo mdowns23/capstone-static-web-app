@@ -237,84 +237,117 @@ function App() {
   var distCoords = []
   let setGas = new Set()
   let GasSet = []
-  
-  function getStations(pBounds){
+  let gasIndex = {}
+
+  function nearbySearchPromise(service, location, radius, type) {
+    return new Promise((resolve, reject) => {
+      service.nearbySearch({ location, radius, type }, (results, status) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          resolve(results);
+        } else {
+          reject(new Error(status));
+        }
+      });
+    });
+  }
+
+  async function getStations(pBounds){
+    
     let gasMarkers = []
     var currTankSize = 0
     if (CurrentSize === "TFive"){
       currTankSize = TankSize*.25
+      console.log("currTSIZE: " + currTankSize)
     } 
     else if(CurrentSize === "Fifty"){
       currTankSize = TankSize *.5
+      console.log("currTSIZE: " + currTankSize)
     }
     else if(CurrentSize === "SFive"){
       currTankSize = TankSize*.75
+      console.log("currTSIZE: " + currTankSize)
     }
-    else{ currTankSize = TankSize}
+    else{ currTankSize = TankSize
+      console.log("currTSIZE: " + currTankSize)}
     distCoords.push([waypoints[0][0], waypoints[0][1]])
     var distTrack = 0
+    
     const service = new google.maps.places.PlacesService(map)
     const searchPromises = [];
     for (let i = 0; i < waypoints.length; i+=40){
-      service.nearbySearch({
-        location:{ lat: waypoints[i][0], lng:waypoints[i][1]},
-        radius: '20000',
-        type: ['gas_station']
-      }, callback);
-
-
-      async function callback(results, status){
-        if(status === google.maps.places.PlacesServiceStatus.OK){
-          for (var j = 0; j < results.length; j++){
-            if(google.maps.geometry.poly.containsLocation(results[j].geometry.location,pBounds) === true){
-              //console.log("GEO: " + results[j].geometry.location.lat())
-              currTankSize = currTankSize - ((await distanceCalc(distCoords[distTrack][0], distCoords[distTrack][1], results[j].geometry.location.lat(), results[j].geometry.location.lng() )/Mpg))
-              var gasLvl = currTankSize/TankSize
-              
-              //console.log("LEVEL: " + gasLvl)
-              gasLvl = Math.round(gasLvl *10) / 10
-              //console.log(results[j]['vicinity'])
-              //console.log(results[j]['plus_code']['compound_code'])
-              if (gasLvl <= .5){
-                distCoords.push([results[j].geometry.location.lat(), results[j].geometry.location.lng()])
-                distTrack+=1
-                currTankSize = TankSize
-                gasMarkers.push(new google.maps.Marker({
-                  position: results[j].geometry.location, map, 
-                  title: results[j]['name']
-                }))
-
-                if(!setGas.has(results[j]['vicinity'])){
-                  var price = getGasStationInfo(results[j].geometry.location.lat(), results[j].geometry.location.lng())
-                }
-
-                var info = {
-                  name: results[j]['name'],
-                  vicinity: results[j]['vicinity'],
-                  price: await price
-                }
-                if(!setGas.has(results[j]['vicinity'])){
-                  GasInformation.push(info);
-                  setGas.add(results[j]['vicinity'])
-                  console.log("INLOOP:" + GasInformation);
-                  GasSet = Array.from(new Set(GasInformation))
-                  setValueArray(GasSet)
-                }
-                
-                
-                
-              }
-            }
-          }
-        }
+      const location = { lat: waypoints[i][0], lng: waypoints[i][1] };
+      const radius = '20000';
+      const type = ['gas_station'];
+      try {
+        const results = await nearbySearchPromise(service, location, radius, type);
+        console.log(i)
+        await callback(results, google.maps.places.PlacesServiceStatus.OK);
+      } catch (error) {
+        console.error(error);
       }
     }
-    setGasMarkerArray(gasMarkers)
-    //getGasStationInfo()
-    //console.log("ARRAY: " + GasInformation )
     
-    console.log("SET" + ValueArray);
-    //console.log("Value in the array: "+ValueArray.length);
+    
+      //console.log("i before the second for loop: " + i)
+
+      function callback(results, status) {
+        return new Promise(async (resolve, reject) => {
+          if(status === google.maps.places.PlacesServiceStatus.OK){
+            for (var j = 0; j < results.length; j++){
+              if(google.maps.geometry.poly.containsLocation(results[j].geometry.location,pBounds) === true){
+                console.log("J internal for loop :" + j);
+                try {
+                  let dist = await distanceCalc(distCoords[distCoords.length-1][0], distCoords[distCoords.length-1][1], results[j].geometry.location.lat(), results[j].geometry.location.lng() );
+                  console.log("j: " +j+ "DISTMILES: " + dist)
+                  dist = dist / Mpg;
+                  var tmpTankSize = currTankSize - dist
+                  var gasLvl = tmpTankSize/TankSize;
+                  
+                  
+                  //console.log("i: " + i + " j: " + j+ " Gas: " + gasLvl);
+                  console.log("j:" + j + "GASLVL B4: " + gasLvl)
+                  gasLvl = Math.round(gasLvl *10) / 10;
+                  console.log("j:" + j +"GASLVL: " + gasLvl)
+                  if (gasLvl <= .5){
+                    currTankSize = currTankSize - dist;
+                    distCoords.push([results[j].geometry.location.lat(), results[j].geometry.location.lng()]);
+                    distTrack+=1;
+                    currTankSize = TankSize;
+                    gasMarkers.push(new google.maps.Marker({
+                      position: results[j].geometry.location, map, 
+                      title: results[j]['name']
+                    }));
+                    if(!setGas.has(results[j]['vicinity'])){
+                      var price = getGasStationInfo(results[j].geometry.location.lat(), results[j].geometry.location.lng());
+                    }
+                    var info = {
+                      name: results[j]['name'],
+                      vicinity: results[j]['vicinity'],
+                      price: await price
+                    };
+                    if(!setGas.has(results[j]['vicinity'])){
+                      GasInformation.push(info);
+                      setGas.add(results[j]['vicinity']);
+                      console.log("INLOOP:" + GasInformation);
+                      GasSet = Array.from(new Set(GasInformation));
+                      setValueArray(GasSet);
+                    }
+                  }
+                } catch (error) {
+                  reject(error);
+                }
+              }
+            }
+            resolve();
+          } else {
+            reject(new Error("Failed to get places."));
+          }
+        });
+      }
+      
+    //}
+    setGasMarkerArray(gasMarkers)
+    
   }
   //console.log("Variable data "+GasInformation);
   //console.log("UseState" + ValueArray);
@@ -338,7 +371,7 @@ function App() {
 
       const response = await fetch('api/data_function', requestOptions);
       const data = await response.json();
-      console.log("DATA:" + data)
+      //console.log("DATA:" + data)
       return data
     //}
   }
@@ -354,8 +387,9 @@ function App() {
       travelMode: google.maps.TravelMode.DRIVING})
     
     var miles = dist.routes[0].legs[0].distance.value
-    //console.log(dist.routes[0].legs[0].distance.text)
+
     miles = miles/1609.34
+    //console.log("MILES: " + miles)
     return miles
 
 
@@ -389,7 +423,10 @@ function App() {
         <div>
           <Navigation />
         </div>
+
         <form onSubmit={handleMapSubmit}>
+          <div className = "Overlay"></div>
+
           <table className='Value'>
             <h1>Enter starting and Ending</h1>
             <tbody className='nameValue'>
@@ -459,7 +496,7 @@ function App() {
               {directionResponse && gasMarkerArray && (
                 //  <div style={{ textAlign: "center" }}>
                 <div>
-                 {/* <table class = 'distance'>
+                 <table class = 'distance'>
                    <thead>
                      <tr class = 'inner'>
                        <th>Distance: {distance}</th>
@@ -468,15 +505,53 @@ function App() {
                    </thead>
                    <tbody>
                    </tbody>
-                 </table> */}
-                 <div>
+                 </table>
+
+                    {/* <table className="trip-info">
+                      <thead>
+                        <tr className="trip-info-row">
+                          <th className="trip-info-label">Distance:</th>
+                          <td className="trip-info-value">{distance}</td>
+                          <th className="trip-info-label">Duration:</th>
+                          <td className="trip-info-value">{duration}</td>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      </tbody>
+                    </table> */}
+                {/* <div>
               <h2>Gas Stations</h2>
               <ul>{Array.from(ValueArray).map((dist, index) => {
                   //console.log("Length value array" +  ValueArray.length)
                   //console.log("Name: "+ dist.name +" Vicinity " + dist.vicinity)
                   return(<li key={index}>{dist.name} - {dist.vicinity} - {dist.price}</li>)
                 })}</ul>
-            </div>
+            </div> */}
+
+
+                  <div className="table-responsive">
+                    <table className="table table-bordered table-striped">
+                      <thead>
+                        <tr>
+                          <th>Fill</th>
+                          <th>Gas Station</th>
+                          <th>Address</th>
+                          <th>Price</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {Array.from(ValueArray).map((dist, index) => (
+                          <tr key={index}>
+                            <td>{index}</td>
+                            <td>{dist.name}</td>
+                            <td>{dist.vicinity}</td>
+                            <td>{dist.price}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
 
                 {/* <div>
                   <h2>Gas Stations</h2>
