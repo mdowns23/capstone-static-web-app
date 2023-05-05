@@ -118,6 +118,7 @@ function App() {
   const [gasMarkerArray, setGasMarkerArray] = useState([])
   const [distance, setDistance] = useState('')
   const [duration, setDuration] = useState('')
+  const [TotalPrice, setTotalPrice] = useState('')
 
   /** @type React.MutableRefObject<HTMLInputElement> */
   const originRef = useRef()
@@ -199,6 +200,7 @@ function App() {
     setGas = new Set()
     setValueArray(new Set())
     GasInformation.length = 0
+    totalGasPrice = 0
 
   }
 
@@ -238,6 +240,7 @@ function App() {
   let setGas = new Set()
   let GasSet = []
   let gasIndex = {}
+  let totalGasPrice = 0
 
   function nearbySearchPromise(service, location, radius, type) {
     return new Promise((resolve, reject) => {
@@ -306,9 +309,9 @@ function App() {
                   
                   //console.log("i: " + i + " j: " + j+ " Gas: " + gasLvl);
                   console.log("j:" + j + "GASLVL B4: " + gasLvl)
-                  gasLvl = Math.round(gasLvl *10) / 10;
+                  var gasLvlR = Math.round(gasLvl *10) / 10;
                   console.log("j:" + j +"GASLVL: " + gasLvl)
-                  if (gasLvl <= .5){
+                  if (gasLvlR <= .5){
                     currTankSize = currTankSize - dist;
                     distCoords.push([results[j].geometry.location.lat(), results[j].geometry.location.lng()]);
                     distTrack+=1;
@@ -319,6 +322,12 @@ function App() {
                     }));
                     if(!setGas.has(results[j]['vicinity'])){
                       var price = getGasStationInfo(results[j].geometry.location.lat(), results[j].geometry.location.lng());
+                      var tgp = await price
+                      //console.log("TGP: " + tgp)
+                      totalGasPrice = totalGasPrice + ((parseFloat(await tgp)) * ((1-gasLvl)*TankSize))
+                      totalGasPrice = Math.round(totalGasPrice *100) / 100;
+                      console.log("TGP: " + totalGasPrice)
+                      setTotalPrice(totalGasPrice)
                     }
                     var info = {
                       name: results[j]['name'],
@@ -501,6 +510,7 @@ function App() {
                      <tr class = 'inner'>
                        <th>Distance: {distance}</th>
                        <th>Duration : {duration}</th>
+                       <th>Total: {TotalPrice}</th>
                      </tr>
                    </thead>
                    <tbody>
