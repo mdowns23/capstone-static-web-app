@@ -12,25 +12,6 @@ import {useJsApiLoader, GoogleMap, MarkerF, Autocomplete, DirectionsRenderer, Po
 const center = {lat: 47.6205,lng: -122.3493}
 
 function App() {
-/*
-  const [googleMapsKey, setGoogleMapsKey] = useState('');
-
-  useEffect(() => {
-    (async function () {
-      const { key } = await( await fetch(`/api/data_function`)).json();
-      //console.log(key)
-      setGoogleMapsKey(key);
-    })();
-  });
-*/
-
-  //return <div>{data}</div>;
-
-//console.log(process.env.REACT_APP_GOOGLE_MAPS_API_KEY)
-
-// starting and destiton location.
-  
-  // variable startingLocation
   const [startingLocation, setStartingLocation] = useState()
   //variable: destation
   const [destination, setDestination] = useState()
@@ -45,24 +26,18 @@ function App() {
 
 
   const [isShown, setIsShown] = useState(false);
-  //const [Distance, setDistance] = useState()
-  //const [Duration, setDuration] = useState()
-
-  
-
+ 
   const [ValueArray, setValueArray] = useState(new Set())
 
   
 
   const [gasInformaiton, setGasInformation] = useState([])
 
-//setting the starting location to update
+
   const handleSatringLocationChange = (event) => {
     const value = event.target.value;
     setStartingLocation(value);
-    //console.log(`Starting Location: ${value}`);
-    //setStartingLocation(e.target.value);
-    //console.log("User location" + e.target.value);
+    
   };
 
   const handleCurrentSize= (event) => {
@@ -84,7 +59,6 @@ function App() {
   //setting the diestentaion to update
   const handleDestinationChange = (e) => {
     setDestination(e.target.value);
-    //console.log("User Destination" + e.target.value);
   };
 
     const handleMapSubmit = (e) => {
@@ -97,9 +71,7 @@ function App() {
     setTankSize('')
     
     setIsShown(true);
-    // console.log('Map Starting Location: ', startingLocation);
-    // console.log('Map submitted with destination:', destation);
-    // You can use the destination value here, for example, to calculate the distance between the starting point and the destination.
+  
   };
 
     //google maps api key
@@ -277,13 +249,15 @@ function App() {
     
     const service = new google.maps.places.PlacesService(map)
     const searchPromises = [];
-    for (let i = 0; i < waypoints.length; i+=40){
+    console.log("LENGTH: " + waypoints.length)
+    for (let i = 0; i < waypoints.length; i+=10){
       const location = { lat: waypoints[i][0], lng: waypoints[i][1] };
-      const radius = '20000';
+      const radius = '50000';
       const type = ['gas_station'];
+      console.log("I: " + i)
       try {
         const results = await nearbySearchPromise(service, location, radius, type);
-        console.log(i)
+        console.log("RESULTS: "+results)
         await callback(results, google.maps.places.PlacesServiceStatus.OK);
       } catch (error) {
         console.error(error);
@@ -298,19 +272,20 @@ function App() {
           if(status === google.maps.places.PlacesServiceStatus.OK){
             for (var j = 0; j < results.length; j++){
               if(google.maps.geometry.poly.containsLocation(results[j].geometry.location,pBounds) === true){
-                console.log("J internal for loop :" + j);
+                //console.log("J internal for loop :" + j);
                 try {
                   let dist = await distanceCalc(distCoords[distCoords.length-1][0], distCoords[distCoords.length-1][1], results[j].geometry.location.lat(), results[j].geometry.location.lng() );
-                  console.log("j: " +j+ "DISTMILES: " + dist)
+                  //console.log("j: " +j+ "DISTMILES: " + dist)
                   dist = dist / Mpg;
                   var tmpTankSize = currTankSize - dist
                   var gasLvl = tmpTankSize/TankSize;
                   
                   
-                  //console.log("i: " + i + " j: " + j+ " Gas: " + gasLvl);
+                  //console.log("i: " + i + " j: " + j+ " Gasb4: " + gasLvl);
                   console.log("j:" + j + "GASLVL B4: " + gasLvl)
                   var gasLvlR = Math.round(gasLvl *10) / 10;
                   console.log("j:" + j +"GASLVL: " + gasLvl)
+                  console.log("GASLVLR: " + gasLvlR)
                   if (gasLvlR <= .5){
                     currTankSize = currTankSize - dist;
                     distCoords.push([results[j].geometry.location.lat(), results[j].geometry.location.lng()]);
@@ -358,14 +333,7 @@ function App() {
     setGasMarkerArray(gasMarkers)
     
   }
-  //console.log("Variable data "+GasInformation);
-  //console.log("UseState" + ValueArray);
-
-   //    GasInformation.push({name : results[j]['name'], vicinity :results[j]['vicinity']})
-              //     console.log("Zie of the value" +GasInformation)
-              // //  // setValueArray([GasInformation])
-              //     console.log("ARRAY: " + GasInformation[j]['name'] +" " + GasInformation[j]['vicinity'])
-              // //    //console.log(ValueArray)
+  
 
   async function getGasStationInfo(lat, long) {
     //for (var i = 1; i < distCoords.length ; i++){
@@ -380,7 +348,6 @@ function App() {
 
       const response = await fetch('api/data_function', requestOptions);
       const data = await response.json();
-      //console.log("DATA:" + data)
       return data
     //}
   }
@@ -394,38 +361,19 @@ function App() {
       origin: pt1,
       destination: pt2, 
       travelMode: google.maps.TravelMode.DRIVING})
+
+      
     
     var miles = dist.routes[0].legs[0].distance.value
 
     miles = miles/1609.34
-    //console.log("MILES: " + miles)
     return miles
 
 
   }
 
-
-  //console.log("The vlaue of the ValueArray: " + ValueArray)
-  // console.log("Beginning")
-
-  //   console.log("End")
-
-  // console.log("Gas Size" + GasInformation.length)
-  // const gasListItems = GasInformation.map((gas, index) => (
-  //   <li key={index}>
-  //     <div>Name: {gas.name}</div>
-  //     <div>Address: {gas.vicinity}</div>
-  //   </li>
-  // ));
-
-  // console.log(gasListItems)
-
-  //console.log("Value array:" + ValueArray);
-    // console.log(renderList);
-  //console.log(distCoords[0][1])
-  if(directionResponse){
-    //console.log(distCoords);
-  }
+  
+  if(directionResponse){ }
 
    return (   
     <main className='water'> 
@@ -517,27 +465,6 @@ function App() {
                    </tbody>
                  </table>
 
-                    {/* <table className="trip-info">
-                      <thead>
-                        <tr className="trip-info-row">
-                          <th className="trip-info-label">Distance:</th>
-                          <td className="trip-info-value">{distance}</td>
-                          <th className="trip-info-label">Duration:</th>
-                          <td className="trip-info-value">{duration}</td>
-                        </tr>
-                      </thead>
-                      <tbody>
-                      </tbody>
-                    </table> */}
-                {/* <div>
-              <h2>Gas Stations</h2>
-              <ul>{Array.from(ValueArray).map((dist, index) => {
-                  //console.log("Length value array" +  ValueArray.length)
-                  //console.log("Name: "+ dist.name +" Vicinity " + dist.vicinity)
-                  return(<li key={index}>{dist.name} - {dist.vicinity} - {dist.price}</li>)
-                })}</ul>
-            </div> */}
-
 
                   <div className="table-responsive">
                     <table className="table table-bordered table-striped">
@@ -561,30 +488,6 @@ function App() {
                       </tbody>
                     </table>
                   </div>
-
-
-                {/* <div>
-                  <h2>Gas Stations</h2>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Vicinity</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      { ValueArray.length > 0 && ValueArray.map((dist, index) => {
-                        console.log("Name: "+ dist.name +" Vicinity " + dist.vicinity)
-                        return(
-                          <tr key={index}>
-                            <td>{dist.name}</td>
-                            <td>{dist.vicinity}</td>
-                          </tr>
-                        )
-                      })}
-                    </tbody>
-                  </table>
-                </div> */}
                 
                </div>
                 )}
