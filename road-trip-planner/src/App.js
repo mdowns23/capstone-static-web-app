@@ -226,6 +226,7 @@ function App() {
     });
   }
 
+  var count = 0
   async function getStations(pBounds){
     
     let gasMarkers = []
@@ -256,6 +257,7 @@ function App() {
       const type = ['gas_station'];
       console.log("I: " + i)
       try {
+        await delay(250)
         const results = await nearbySearchPromise(service, location, radius, type);
         console.log("RESULTS: "+results)
         await callback(results, google.maps.places.PlacesServiceStatus.OK);
@@ -274,6 +276,7 @@ function App() {
               if(google.maps.geometry.poly.containsLocation(results[j].geometry.location,pBounds) === true){
                 //console.log("J internal for loop :" + j);
                 try {
+                  await delay(500)
                   let dist = await distanceCalc(distCoords[distCoords.length-1][0], distCoords[distCoords.length-1][1], results[j].geometry.location.lat(), results[j].geometry.location.lng() );
                   //console.log("j: " +j+ "DISTMILES: " + dist)
                   dist = dist / Mpg;
@@ -352,12 +355,12 @@ function App() {
     //}
   }
 
-  async function distanceCalc(lat1, long1, lat2, long2, retryCount = 0){
+  async function distanceCalc(lat1, long1, lat2, long2){
     const pt1 = {lat: lat1, lng: long1}
     const pt2 = {lat: lat2, lng: long2}
 
+    try{
     let distanceService = new google.maps.DirectionsService()
-    await delay(500)
     const dist = await distanceService.route({
       origin: pt1,
       destination: pt2, 
@@ -369,6 +372,15 @@ function App() {
 
     miles = miles/1609.34
     return miles
+    }catch(error){
+      if (error.code === "OVER_QUERY_LIMIT") {
+        console.log("Retrying distanceCalc request...");
+        await delay(500);
+        return distanceCalc(lat1, long1, lat2, long2);
+      } else {
+        throw error;
+      }
+    }
 
   }
 
