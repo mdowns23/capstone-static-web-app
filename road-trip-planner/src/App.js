@@ -257,7 +257,7 @@ function App() {
       const type = ['gas_station'];
       console.log("I: " + i)
       try {
-        await delay(250)
+        //await delay(250)
         const results = await nearbySearchPromise(service, location, radius, type);
         console.log("RESULTS: "+results)
         await callback(results, google.maps.places.PlacesServiceStatus.OK);
@@ -276,7 +276,7 @@ function App() {
               if(google.maps.geometry.poly.containsLocation(results[j].geometry.location,pBounds) === true){
                 //console.log("J internal for loop :" + j);
                 try {
-                  await delay(500)
+                  //await delay(500)
                   let dist = await distanceCalc(distCoords[distCoords.length-1][0], distCoords[distCoords.length-1][1], results[j].geometry.location.lat(), results[j].geometry.location.lng() );
                   //console.log("j: " +j+ "DISTMILES: " + dist)
                   dist = dist / Mpg;
@@ -375,7 +375,7 @@ function App() {
     }catch(error){
       if (error.code === "OVER_QUERY_LIMIT") {
         console.log("Retrying distanceCalc request...");
-        await delay(500);
+        await delay(3000);
         return distanceCalc(lat1, long1, lat2, long2);
       } else {
         throw error;
