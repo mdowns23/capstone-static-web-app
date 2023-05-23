@@ -356,8 +356,8 @@ function App() {
     const pt1 = {lat: lat1, lng: long1}
     const pt2 = {lat: lat2, lng: long2}
 
-    try{
     let distanceService = new google.maps.DirectionsService()
+    await delay(500)
     const dist = await distanceService.route({
       origin: pt1,
       destination: pt2, 
@@ -369,17 +369,6 @@ function App() {
 
     miles = miles/1609.34
     return miles
-    }catch(error){
-      if (error === "OVER_QUERY_LIMIT" && retryCount < 3) {
-        console.log("Retrying request...");
-        // Delay for a short period before retrying (e.g., 1 second)
-        await delay(1000);
-        return distanceCalc(lat1, long1, lat2, long2, retryCount + 1);
-      } else {
-        // Throw the error if it's not "OVER_QUERY_LIMIT" or exceeded the maximum retry count
-        throw error;
-      }
-    }
 
   }
 
