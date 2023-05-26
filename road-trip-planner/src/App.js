@@ -1,7 +1,9 @@
 //import logo from './logo.svg';
-import './App.css';
+//import './App.css';
+import './hero.css'
+import MinNavBar from './MinNavBar';
 import Navigation from "./Navigation";
-import './style.css'
+//import './style.css'
 import React, { useState, useEffect, useRef } from 'react';
 //import '@google-polyline'
 import {Box, Button} from '@chakra-ui/react'
@@ -97,6 +99,8 @@ function App() {
   /** @type React.MutableRefObject<HTMLInputElement> */
   const destinationRef = useRef()
 
+  const contentRef = useRef(null);
+
   let GasInformation = []
 
   if(!isLoaded){
@@ -148,6 +152,16 @@ function App() {
     polygonBound.setMap(map)
     getStations(polygonBound)
     
+    // Scroll to the bottom of the screen after route calculation
+    const scrollToBottom = () => {
+      window.scrollTo(0, document.body.scrollHeight);
+    };
+
+    // Execute the route calculation
+    await calculateRoute();
+
+    // Scroll to the bottom of the screen
+    scrollToBottom();
   }
 
   function clearRoute() {
@@ -251,7 +265,7 @@ function App() {
     const service = new google.maps.places.PlacesService(map)
     const searchPromises = [];
     console.log("LENGTH: " + waypoints.length)
-    for (let i = 0; i < waypoints.length; i+=10){
+    for (let i = 0; i < waypoints.length; i+=5){
       const location = { lat: waypoints[i][0], lng: waypoints[i][1] };
       const radius = '50000';
       const type = ['gas_station'];
@@ -272,7 +286,7 @@ function App() {
       function callback(results, status) {
         return new Promise(async (resolve, reject) => {
           if(status === google.maps.places.PlacesServiceStatus.OK){
-            for (var j = 0; j < results.length; j++){
+            for (var j = 0; j < results.length; j+=3){
               if(google.maps.geometry.poly.containsLocation(results[j].geometry.location,pBounds) === true){
                 //console.log("J internal for loop :" + j);
                 try {
@@ -318,6 +332,10 @@ function App() {
                       console.log("INLOOP:" + GasInformation);
                       GasSet = Array.from(new Set(GasInformation));
                       setValueArray(GasSet);
+                    }
+                    if(j >= (parseInt(results.length/2))){
+                      console.log("breaking...")
+                      break;
                     }
                   }
                 } catch (error) {
@@ -396,122 +414,150 @@ function App() {
           <Navigation />
         </div>
 
-        <form onSubmit={handleMapSubmit}>
-          <div className = "Overlay"></div>
+        <div className="HeroSection">
+  <video autoPlay loop muted id="video">
+    <source src="/Videos/maldivesVideo.mp4" type="video/mp4" />
+  </video>
+  <div className="overlay"></div>
 
-          <table className='Value'>
-            <h1>Enter starting and Ending</h1>
-            <tbody className='nameValue'>
-              <tr className='t1'>
-                <td className='t2'>
-                  <Autocomplete>
-                    <input type="text" value={startingLocation} placeholder='Starting Location' ref={originRef} onChange={handleSatringLocationChange} />
-                  </Autocomplete>
+  <div className="content">
+    <h1>Plan your Trip</h1>
+
+    <form className="form" onSubmit={handleMapSubmit}>
+
+      <div className='Tablegroup'>
+          <table className='TableInfo'>
+              <tr className='tr_1'>
+                <td className = 'td_1'>
+                  <label htmlFor="startingLocation">Origin:</label>
                 </td>
-              </tr>
-              <tr>
+
+                <td className='td_2'>
+                      <Autocomplete>
+                      <input
+                        className='inputSoruce'
+                        type="text"
+                        value={startingLocation}
+                        // placeholder="Starting Location"
+                        ref={originRef}
+                        onChange={handleSatringLocationChange}
+                      />
+                    </Autocomplete>
+                </td>
+              {/* </tr> */}
+            
+              {/* <tr> */}
+                <td className='td_3'>
+                  <label htmlFor="destination">Destination:</label>
+                </td>
+
                 <td>
-                  <Autocomplete>
-                    <input type="text" value={destination} ref={destinationRef} placeholder='Destination' onChange={handleDestinationChange} />
-                  </Autocomplete>
+
+                <Autocomplete>
+                    <input
+                      type="text"
+                      value={destination}
+                      ref={destinationRef}
+                      // placeholder="Destination"
+                      onChange={handleDestinationChange}
+                    />
+                </Autocomplete>
+
                 </td>
               </tr>
-            </tbody>
+            
           </table>
+      </div>
 
-          <div class ='gasInputs'>
-          <div class = 'gasSide'>
-
-            <select value={gasType} onChange={handleSelect}>
-              <option value="">GasType</option>
-              <option value="Regular">Regular</option>
-              <option value="Midgrade">MidGrade</option>
-              <option value="Premium">Premium</option>
-              <option value="Diesel">Diesel</option>
-            </select>
-
-          </div>
-          
-
-          <div class = 'mpgside'>
-            <input type="text" value={Mpg} placeholder='Mpg' onChange={handleMPG} />
-          </div>
-
-          <div class = 'Tankside'>
-            <input type="text" value={TankSize} placeholder='Tank Size' onChange={handleTanksize} />
-          </div>
-          
-          <div class = 'CurrentGas'>
-
-            <select value={CurrentSize} onChange={handleCurrentSize}>
-                <option value="">Current Fuel</option>
-                <option value="TFive">25%</option>
-                <option value="Fifty">50%</option>
-                <option value="SFive">75%</option>
-                <option value="Full">100%</option>
-            </select>
-          </div>
+      <div className="gasInputs">
+        <div className="gasSide">
+          <select value={gasType} onChange={handleSelect}>
+            <option value="">GasType</option>
+            <option value="Regular">Regular</option>
+            <option value="Midgrade">MidGrade</option>
+            <option value="Premium">Premium</option>
+            <option value="Diesel">Diesel</option>
+          </select>
         </div>
 
-        
-          <div className='button'>
-            <button type="submit" onClick={calculateRoute}>calculate</button>
-            <button type="submit" onClick={clearRoute}>Clear</button>
-              <Box position='absolute' left={10} top={400} h='75%' w='95%'>
-              {/*Google Map Box*/}
-              <GoogleMap center={center} 
-                         zoom={15} 
-                         mapContainerStyle={{width:'100%', height:'100%'}}
-                         onLoad={map => setMap(map)}>
-                {/*Display markers*/}
-              </GoogleMap>
-              {directionResponse && gasMarkerArray && (
-                //  <div style={{ textAlign: "center" }}>
-                <div>
-                 <table class = 'distance'>
-                   <thead>
-                     <tr class = 'inner'>
-                       <th>Distance: {distance}</th>
-                       <th>Duration : {duration}</th>
-                       <th>Total: {TotalPrice}</th>
-                     </tr>
-                   </thead>
-                   <tbody>
-                   </tbody>
-                 </table>
+        <div className='Tablegroup'>
+          <table className='TableInfo1'>
+              <tr className='tr_1'>
+                <td className = 'td_1'>
+                <label htmlFor="Mpg">Enter MPG:</label>
+                </td>
 
-
-                  <div className="table-responsive">
-                    <table className="table table-bordered table-striped">
-                      <thead>
-                        <tr>
-                          <th>Fill</th>
-                          <th>Gas Station</th>
-                          <th>Address</th>
-                          <th>Price</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {Array.from(ValueArray).map((dist, index) => (
-                          <tr key={index}>
-                            <td>{index}</td>
-                            <td>{dist.name}</td>
-                            <td>{dist.vicinity}</td>
-                            <td>{dist.price}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                
-               </div>
-                )}
-            </Box>
-          
-           
+                <td className='td_2'>
+                <input type="text" value={Mpg} placeholder="Mpg" onChange={handleMPG} />
+                </td>
+              {/* </tr> */}
+            
+              {/* <tr> */}
+                <td className='td_3'>
+                <label htmlFor="TankSize">Tank Size:</label>
+                </td>
+                <td>
+                <input type="text" value={TankSize} placeholder="Tank Size" onChange={handleTanksize} />
+                </td>
+              </tr>
+            
+          </table>
           </div>
-        </form>
 
+        
+        
+        <div className="currentGas">
+          <select value={CurrentSize} onChange={handleCurrentSize}>
+            <option value="">Current Fuel</option>
+            <option value="TFive">25%</option>
+            <option value="Fifty">50%</option>
+            <option value="SFive">75%</option>
+            <option value="Full">100%</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="button">
+        <button type="submit" onClick={calculateRoute}>
+          Calculate Route <i className="fa-solid fa-route"></i>
+        </button>
+        <div className='clearbutton'>
+        <button type="submit" onClick={clearRoute}>
+          Clear <i className="fa-solid fa-xmark"></i>
+        </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div className="SecondPage">
+  <div id="map">
+  <div style={{ height: '2000px' }} id="content" ref={contentRef}>
+
+    <Box position="absolute" left={20} top={900} h="75%" w="95%">
+      {/*Google Map Box*/}
+      <GoogleMap
+        center={center}
+        zoom={15}
+        mapContainerStyle={{ width: "100%", height: "100%" }}
+        onLoad={(map) => setMap(map)}
+      >
+        {/*Display markers*/}
+      </GoogleMap>
+
+      {directionResponse && gasMarkerArray && (
+        // <div className='minibar' style={{ width: '200px' }}>
+          <MinNavBar distance={distance} duration={duration} totalPrice={TotalPrice} ValueArray={ValueArray}/>
+        // </div>
+        
+          
+        
+      )}
+    </Box>
+  </div>
+  </div>
+</div>
 
 
       </main>

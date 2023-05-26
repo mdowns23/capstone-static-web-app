@@ -1,0 +1,266 @@
+.HeroSection {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+    position: relative;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+  }
+  
+  #video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+  }
+  
+  .HeroSection .content {
+    position: absolute;
+    flex-direction: column;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 100%;
+    z-index: 1;
+  }
+  
+  .HeroSection h1 {
+    font-size: 3rem;
+    color: #fff;
+    margin-bottom: 2rem;
+  }
+  
+  .form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #000;
+    border: 1px solid #ccc;
+    padding: 1rem;
+    border-radius: 8px;
+    max-width: 1100px;
+    width: 100%;
+    margin: 0 auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  
+  .form label {
+    flex-basis: 100%;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  
+  .inputGroup {
+    flex-basis: 100%;
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    /* border: 1px solid ;
+    border-radius: 8px; */
+    /* padding: 0.5rem; */
+    width: 100%; /* Add width property */
+    box-sizing: border-box; /* Add box-sizing property */
+  }
+  
+  .inputGroup label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    border-right: 1px solid ;
+    padding-right: 1rem;
+    box-sizing: border-box;
+    width: 100%; /* Add width property */
+    text-align: right; /* Align the labels to the right */
+    margin-right: 1rem; /* Add margin-right to create space between labels and inputs */
+  }
+  
+  .inputGroup input[type="text"],
+  .inputGroup select {
+    flex: 1;
+    border: transparent;
+    background-color: transparent;
+    font-size: 1.2rem;
+    font-family: 'Poppins', sans-serif;
+    padding: 0.5rem;
+    outline: none;
+  }
+  
+  
+  .form input[type="text"],
+  .form select {
+    border: 1px solid black;
+    border-radius: 8px;
+    background-color: transparent;
+    font-size: 1.2rem;
+    font-family: 'Poppins', sans-serif;
+    padding: 0.5rem;
+    flex: 1;
+    outline: none;
+    margin-bottom: 1rem;
+  }
+  
+  
+  .form select {
+    cursor: pointer;
+  }
+  
+  
+  .TableInfo {
+    width: 100%;
+    
+  }
+  .tr_1 {
+    width: 100%;
+    
+  }
+  
+  .td_1 {
+    width: 30%;
+    
+  }
+  
+  .td_2 {
+    width: 20%;
+    
+  }
+  .td_3 {
+    width: 25%;
+    
+  }
+  .td_4 {
+    width: 25%;
+    
+  }
+  
+  .inputSoruce{
+    border: 1px solid black;
+  }
+  
+  .form select {
+    cursor: pointer;
+  }
+  
+  .gasInputs {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Add justify-content property */
+  }
+  
+  
+  .gasSide,
+  .mpgSide,
+  .tankSide,
+  .currentGas {
+    flex: 1;
+    margin-right: 1rem;
+  }
+  
+  .gasSide select,
+  .mpgSide input,
+  .tankSide input,
+  .currentGas select {
+    width: 100%;
+    margin-bottom: 1rem;
+    border: 1px ;
+    border-radius: 8px;
+    padding: 0.5rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .mpgSide input,
+  .tankSide input {
+    border: 1px solid blue;
+    border-radius: 8px;
+    padding: 0.5rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .button {
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Add align-items property */
+    margin-top: 1rem;
+  }
+  
+  .button button {
+    background-color: lightgreen;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-right: 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .button button:hover {
+    background-color: lightblue;
+  }
+  
+  
+  .clearbutton button {
+    background-color: red;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-right: 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .button button:hover {
+    background-color: lightblue;
+  }
+  
+  .SecondPage {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  #map {
+    width: 80%;
+    height: 80%;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .minibar {
+    width: 200px;
+    transition: transform 0.3s ease;
+  }
+  
+  .minibar:hover {
+    transform: translateX(20px); /* Adjust the value as per your desired movement */
+  }
+  
+  @media screen and (max-width: 940px) {
+    .form {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  
+    .form input[type="text"],
+    .form select {
+      max-width: none;
+      width: 100%;
+    }
+  }
+  
+  

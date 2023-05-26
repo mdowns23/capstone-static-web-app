@@ -1,0 +1,116 @@
+.mini-navbar {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3%;
+    background-color: #fff;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+    width: 70%;
+    height: 15%;
+    border-radius: 13px;
+    margin-bottom: 20px;
+    flex-direction: column;
+    top:2%;
+    left: 15%;
+  }
+  
+  .mini-navbar ul {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Add this line to align the navbar elements in the center */
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .mini-navbar li {
+    margin-right: 20px;
+  }
+  
+  .mini-navbar a {
+    text-decoration: none;
+    color: #222;
+    font-size: 1.2rem;
+    font-weight: 600;
+    padding: 0.7rem 1rem;
+    white-space: nowrap;
+  }
+  
+  .mini-navbar a i {
+    padding-right: 3px;
+  }
+  
+  .mini-navbar a:hover {
+    background-color: #01959a;
+    color: #fff;
+    border-radius: 4px;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .mini-navbar-info {
+    margin-top: 20px;
+    padding: 20px;
+  }
+  
+  .mini-navbar-info p {
+    margin: 0;
+  }
+  
+  .table-wrapper {
+    width: 100%; /* Change width to 100% */
+    margin-top: 20px; /* Add margin-top to create space between navbar and table */
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .table th {
+    background-color: #f2f2f2;
+    color: #333;
+    padding: 10px;
+    text-align: left;
+  }
+  
+  .table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .table tr:last-child td {
+    border-bottom: none;
+  }
+  
+  /* Optional: Hover effect on table rows */
+  .table tr:hover {
+    background-color: #f9f9f9;
+  }
+  
+  @media screen and (max-width: 850px) {
+    .mini-navbar {
+      flex-direction: column;
+      align-items: stretch;
+      height: auto;
+      padding: 20px;
+    }
+  
+    .mini-navbar ul {
+      display: flex;
+      flex-direction: column;
+      grid-gap: 0;
+      margin-top: 10px;
+    }
+  
+    .mini-navbar li {
+      margin: 10px 0;
+    }
+  
+    .mini-navbar a {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 10px;
+    }
+  }
