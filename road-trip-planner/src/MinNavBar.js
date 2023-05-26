@@ -83,7 +83,7 @@ function MiniNavBar({ distance, duration, totalPrice, ValueArray }) {
               <tbody>
                 {Array.from(ValueArray).map((dist, index) => (
                   <tr key={index}>
-                    <td>{index}</td>
+                    <td>{index+1}</td>
                     <td>{dist.name}</td>
                     <td>{dist.vicinity}</td>
                     <td>{dist.price}</td>
